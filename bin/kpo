@@ -1,0 +1,41 @@
+#!/bin/bash
+
+usage() {
+cat << EOF
+Usage: 
+  kpo POD_NAME -n NAMESPACE
+    POD_NAME ...... A partial name of the pod to run this in
+    NAMESPACE ........ The kubernetes namespace where the pod is running
+EOF
+}
+
+
+POSITIONAL=()
+
+while [[ $# -gt 0 ]]
+do
+  key="$1"
+  case $key in
+      -n|--namespace)
+      namespace="$2"
+      shift # past argument
+      shift # past value
+      ;;
+      -h|--help)
+      usage && exit 1;
+      ;;
+      *)    # unknown option
+      POSITIONAL+=("$1") # save it in an array for later
+      shift # past argument
+      ;;
+  esac
+done
+
+set -- "${POSITIONAL[@]}"
+pod_name=$1
+
+if [ -z "$namespace" ]; then
+  namespace='default'
+fi
+
+kubectl get po -n $namespace | grep $pod_name | awk '{print $1; exit}'
