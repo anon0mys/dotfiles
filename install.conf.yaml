@@ -1,3 +1,7 @@
+- defaults:
+    link:
+      relink: true
+
 - clean: ['~']
 
 - link:
@@ -8,5 +12,21 @@
     ~/bin:
         path: bin/
         create: true
+    ~/.zshrc: zshrc
+    ~/.vimrc: vimrc
 
-
+- shell:
+  - command: vim +PlugUpdate +PlugUpgrade +qall
+    description: Installing vim plugins
+    stdin: true
+    stdout: true
+    stderr: true
+  - command: ./scripts/setup-brew.sh
+    description: Installing Homebrew
+    stdin: true
+    stdout: true
+    stderr: true
+  - command: brew bundle
+    description: Installing Homebrew formulas from Brewfile
+    stderr: true
+    stdout: true

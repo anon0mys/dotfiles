@@ -2,3 +2,10 @@
   path=~/dotfiles/gitconfig
 [pager]
 	branch = false
+[credential]
+	helper = osxkeychain
+[user]
+	name = Evan Wheeler
+	email = evan.wheeler@onepeloton.com
+[init]
+	defaultBranch = main
