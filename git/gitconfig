@@ -1,0 +1,16 @@
+[user]
+	name = Evan Wheeler
+	email = evan.wheeler87@gmail.com
+
+# Alternate identities
+[include]
+	path = ~/.gitidentities/identities
+
+[credential]
+	helper = osxkeychain
+
+[init]
+	defaultBranch = main
+
+[pager]
+	branch = false

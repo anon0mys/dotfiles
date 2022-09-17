@@ -1,0 +1,36 @@
+{
+    "workbench.colorTheme": "One Dark Pro",
+    "atomKeymap.promptV3Features": true,
+    "editor.multiCursorModifier": "alt",
+    "editor.formatOnPaste": true,
+    "editor.fontSize": 18,
+    "python.venvPath": "~/.virtualenvs",
+    "workbench.startupEditor": "newUntitledFile",
+    "python.linting.flake8Enabled": true,
+    "python.linting.mypyEnabled": true,
+    "python.linting.banditEnabled": true,
+    "workbench.iconTheme": "eq-material-theme-icons-ocean",
+    "workbench.editorAssociations": {
+        "*.ipynb": "jupyter.notebook.ipynb"
+    },
+    "python.formatting.provider": "none",
+    "editor.tabCompletion": "on",
+    "editor.acceptSuggestionOnEnter": "off",
+    "terminal.integrated.shell.osx": "/bin/zsh",
+    "python.showStartPage": false,
+    "python.linting.flake8Args": [
+        "--max-line-length=119"
+    ],
+    "python.linting.pylintPath": ".",
+    "[ruby]": {
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true,
+        "editor.detectIndentation": false
+    },
+    "liveshare.authenticationProvider": "GitHub",
+    "workbench.editor.enablePreview": false,
+    "security.workspace.trust.untrustedFiles": "open",
+    "ruby.codeCompletion": "rcodetools",
+    "window.zoomLevel": 1,
+    "go.toolsManagement.autoUpdate": true
+}

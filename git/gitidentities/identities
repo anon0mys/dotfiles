@@ -1,0 +1,7 @@
+# Conditions for alternate identities
+
+[includeIf "gitdir:~/peloton/"]
+    path = ./peloton
+
+[includeIf "gitdir:~/onewellness/"]
+    path = ./peloton

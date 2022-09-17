@@ -1,21 +1,13 @@
 - defaults:
     link:
       relink: true
+      create: true
 
 - clean: ['~']
 
-- link:
-    ~/.gitconfig: gitconfig
-    ~/.ssh/config:
-        path: ssh/config
-        create: true
-    ~/bin:
-        path: bin/
-        create: true
-    ~/.zshrc: zshrc
-    ~/.vimrc: vimrc
-
 - shell:
+  - git submodule sync --recursive
+  - git submodule update --init --recursive
   - command: vim +PlugUpdate +PlugUpgrade +qall
     description: Installing vim plugins
     stdin: true
@@ -30,3 +22,21 @@
     description: Installing Homebrew formulas from Brewfile
     stderr: true
     stdout: true
+  - command: ./scripts/vscode-import-ext.sh
+    stdout: true
+    stderr: true
+    description: Install VS Code extensions
+
+- link:
+    ~/.gitconfig: git/gitconfig
+    ~/.gitidentities: git/gitidentities
+    ~/.ssh/config: ssh/config
+    ~/bin: bin        
+    ~/.zshrc: zshrc
+    ~/.vimrc: vimrc
+    ~/Library/Application Support/Code/User/settings.json:
+      path: vscode/settings.json
+      force: true
+    ~/Library/Application Support/Code/User/keybindings.json:
+      path: vscode/keybindings.json
+      force: true
