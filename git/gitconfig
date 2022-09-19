@@ -14,3 +14,5 @@
 
 [pager]
 	branch = false
+[core]
+	excludesfile = /Users/evan.wheeler/.gitignore

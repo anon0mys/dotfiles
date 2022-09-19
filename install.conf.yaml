@@ -5,9 +5,19 @@
 
 - clean: ['~']
 
+- link:
+    ~/.gitconfig: git/gitconfig
+    ~/.gitidentities: git/gitidentities
+    ~/.gitignore: git/gitignore
+    ~/.ssh/config: ssh/config
+    ~/bin: bin        
+    ~/.zshrc: zshrc
+    ~/.vimrc: vimrc
+
 - shell:
   - git submodule sync --recursive
   - git submodule update --init --recursive
+  - git config --global core.excludesfile ~/.gitignore
   - command: vim +PlugUpdate +PlugUpgrade +qall
     description: Installing vim plugins
     stdin: true
@@ -28,12 +38,6 @@
     description: Install VS Code extensions
 
 - link:
-    ~/.gitconfig: git/gitconfig
-    ~/.gitidentities: git/gitidentities
-    ~/.ssh/config: ssh/config
-    ~/bin: bin        
-    ~/.zshrc: zshrc
-    ~/.vimrc: vimrc
     ~/Library/Application Support/Code/User/settings.json:
       path: vscode/settings.json
       force: true

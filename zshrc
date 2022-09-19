@@ -106,6 +106,7 @@ alias k='kubectl'
 alias evim='vim ~/dotfiles-local/vimrc.local'
 alias ezsh='vim ~/dotfiles-local/zshrc.local'
 alias gca='git commit --amend --no-edit'
+alias s='rspec'
 
 # Export root bin bash scripts
 export PATH="$PATH:$HOME/bin"
