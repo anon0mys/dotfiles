@@ -107,6 +107,7 @@ alias evim='vim ~/dotfiles-local/vimrc.local'
 alias ezsh='vim ~/dotfiles-local/zshrc.local'
 alias gca='git commit --amend --no-edit'
 alias s='rspec'
+alias tctl="docker exec temporal-admin-tools tctl"
 
 # Export root bin bash scripts
 export PATH="$PATH:$HOME/bin"
@@ -151,7 +152,7 @@ export AWS_REGION="us-east-1"
 
 s2al () { saml2aws login --skip-prompt --profile=${1} --duo-mfa-option $FORCE_MFA --role="arn:aws:iam::${2}:role/acquisition-rw"; }
 s2a () { eval $(saml2aws script --shell=bash --skip-prompt --profile=${1}); }
-awslogin () { saml2aws login --region $AWS_REGION --profile=${1} --duo-mfa-option $FORCE_MFA --role="arn:aws:iam::${2}:role/$3"; }
+awslogin () { saml2aws login --force --region $AWS_REGION --profile=${1} --duo-mfa-option $FORCE_MFA --role="arn:aws:iam::${2}:role/$3"; }
 awsconfig () { eval $(saml2aws script --shell=bash --skip-prompt --region $AWS_REGION --profile=${1}); }
 awswho () { aws sts get-caller-identity; }
 
@@ -160,17 +161,17 @@ kswap () {
   case $context in
     "cwe-dev")
       context_id=$CWE_DEV
-      role="cwe-dev"
+      role="cwe-infra"
       ;;
 
     "cwe-prod")
       context_id=$CWE_PROD
-      role="cwe-dev"
+      role="cwe-infra"
       ;;
 
     "cwe-stage")
       context_id=$CWE_STAGE
-      role="cwe-dev"
+      role="cwe-infra"
       ;;
 
     "cwe-infra")
