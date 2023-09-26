@@ -32,5 +32,6 @@
     "security.workspace.trust.untrustedFiles": "open",
     "ruby.codeCompletion": "rcodetools",
     "window.zoomLevel": 1,
-    "go.toolsManagement.autoUpdate": true
+    "go.toolsManagement.autoUpdate": true,
+    "redhat.telemetry.enabled": false
 }

@@ -68,7 +68,7 @@ ZSH_THEME="miloshadzic"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+plugins=(git virtualenv) 
 
 source $ZSH/oh-my-zsh.sh
 
@@ -122,9 +122,20 @@ eval "$(exenv init -)"
 eval "$(rbenv init -)"
 eval "$(pyenv init -)"
 
-export PROJECT_HOME=~/Projects
+export VIRTUAL_ENV_DISABLE_PROMPT=1
+export ZSH_THEME_VIRTUALENV_PREFIX='('
+export ZSH_THEME_VIRTUALENV_SUFFIX=')'
 export WORKON_HOME=$HOME/.virtualenvs
 pyenv virtualenvwrapper
+
+
+export ANDROID_HOME=/Users/$USER/Library/Android/sdk
+export ANDROID_SDK_ROOT=/Users/$USER/Library/Android/sdk
+export ANDROID_SDK=/Users/$USER/Library/Android/sdk
+export PATH=${PATH}:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+
+export PATH="$PATH:/Applications/IntelliJ IDEA.app/Contents/MacOS"
+
 
 # Peloton stuff
 
@@ -224,10 +235,14 @@ KUBE_PS1_NS_ENABLE=false
 KUBE_PS1_PREFIX=""
 KUBE_PS1_SEPARATOR="("
 KUBE_PS1_CTX_COLOR="blue"
-PROMPT='$(kube_ps1) '$PROMPT
+PROMPT='$(virtualenv_prompt_info) $(kube_ps1) '$PROMPT
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/Users/evan.wheeler/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/evan.wheeler/google-cloud-sdk/path.zsh.inc'; fi
 
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/evan.wheeler/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/evan.wheeler/google-cloud-sdk/completion.zsh.inc'; fi
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"

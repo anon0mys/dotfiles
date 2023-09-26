@@ -127,6 +127,9 @@ Plug 'joshdick/onedark.vim'
 " File Icons
 Plug 'ryanoasis/vim-devicons'
 
+" Bats Syntax Highlighting
+Plug 'vim-scripts/bats.vim'
+
 call plug#end()
 
 " ========================================
@@ -164,4 +167,3 @@ set colorcolumn=0
 " ====== Colorscheme Config ======
 syntax on
 colorscheme onedark
-
