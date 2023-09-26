@@ -25,7 +25,7 @@ brew "redis"
 brew "tmux"
 brew "vim"
 brew "watch"
-brew "versent/taps/saml2aws"
+brew "saml2aws"
 brew "yarn"
 
 cask "docker"

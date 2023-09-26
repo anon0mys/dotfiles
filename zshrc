@@ -109,6 +109,8 @@ alias gca='git commit --amend --no-edit'
 alias s='rspec'
 alias tctl="docker exec temporal-admin-tools tctl"
 
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
 # Export root bin bash scripts
 export PATH="$PATH:$HOME/bin"
 export PATH="$PATH:/usr/local/bin"
