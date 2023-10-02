@@ -18,6 +18,11 @@
   - git submodule sync --recursive
   - git submodule update --init --recursive
   - git config --global core.excludesfile ~/.gitignore
+  - command: ./scripts/setup-zsh.sh
+    description: Installing zsh plugins
+    stdin: true
+    stdout: true
+    stderr: true
   - command: vim +PlugUpdate +PlugUpgrade +qall
     description: Installing vim plugins
     stdin: true

@@ -101,7 +101,7 @@ unalias gc
 alias shell-plus='./manage.py shell_plus'
 alias django-s='./manage.py runserver'
 alias das='shell-plus'
-alias dc='docker-compose'
+alias dc='docker compose'
 alias k='kubectl'
 alias evim='vim ~/dotfiles-local/vimrc.local'
 alias ezsh='vim ~/dotfiles-local/zshrc.local'
@@ -120,7 +120,6 @@ export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
 export PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV="true"
 export PATH="$HOME/.exenv/bin:$PATH"
-eval "$(exenv init -)"
 eval "$(rbenv init -)"
 eval "$(pyenv init -)"
 
@@ -137,14 +136,12 @@ export ANDROID_SDK=/Users/$USER/Library/Android/sdk
 export PATH=${PATH}:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
 
 export PATH="$PATH:/Applications/IntelliJ IDEA.app/Contents/MacOS"
+export PATH="$PATH:/Applications/PyCharm.app/Contents/MacOS"
 
 
 # Peloton stuff
 
 export API_CONFIG_YAML_FOLDER=./configurations
-
-source ~/peloton/mochi/bash_functions/docker.sh
-source ~/peloton/mochi/bash_functions/kubernetes.sh
 
 # Not sure what these are for
 export TKITCH=048438595429
@@ -232,7 +229,7 @@ alias jprod="s2al prod ${PELO_PROD} && s2a prod"
 
 alias api_up="./pelo-compose-ctl up"
 
-source "/usr/local/opt/kube-ps1/share/kube-ps1.sh"
+source "/opt/homebrew/opt/kube-ps1/share/kube-ps1.sh"
 KUBE_PS1_NS_ENABLE=false
 KUBE_PS1_PREFIX=""
 KUBE_PS1_SEPARATOR="("
