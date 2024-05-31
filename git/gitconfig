@@ -2,6 +2,8 @@
 	name = Evan Wheeler
 	email = evan.wheeler87@gmail.com
 
+[push]
+        autoSetupRemote = true
 # Alternate identities
 [include]
 	path = ~/.gitidentities/identities
