@@ -1,9 +1,7 @@
 {
-    "workbench.colorTheme": "One Dark Pro",
     "atomKeymap.promptV3Features": true,
     "editor.multiCursorModifier": "alt",
     "editor.formatOnPaste": true,
-    "editor.fontSize": 18,
     "python.venvPath": "~/.virtualenvs",
     "workbench.startupEditor": "newUntitledFile",
     "python.linting.flake8Enabled": true,
