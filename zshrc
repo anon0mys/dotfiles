@@ -129,7 +129,7 @@ export ZSH_THEME_VIRTUALENV_SUFFIX=')'
 export WORKON_HOME=$HOME/.virtualenvs
 pyenv virtualenvwrapper
 
-
+export GROW_HOME=$MY_REPO
 export ANDROID_HOME=/Users/$USER/Library/Android/sdk
 export ANDROID_SDK_ROOT=/Users/$USER/Library/Android/sdk
 export ANDROID_SDK=/Users/$USER/Library/Android/sdk
