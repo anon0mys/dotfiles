@@ -139,8 +139,9 @@ export PATH="$PATH:/Applications/PyCharm.app/Contents/MacOS"
 
 # Grow stuff
 
-export MY_REPO="~/grow/Grow-Dashboard"
+export MY_REPO="/Users/workmac/grow/Grow-Dashboard"
 export GROW_HOME=$MY_REPO
+export FLASK_ENV="local"
 
 # Peloton stuff
 
