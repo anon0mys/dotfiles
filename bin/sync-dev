@@ -1,0 +1,11 @@
+#!/bin/bash
+
+aws sso login
+
+while pgrep -f "aws-sso-login" > /dev/null; do
+  sleep 1
+done
+
+export UV_INDEX_CODEARTIFACT_PASSWORD=$(aws codeartifact get-authorization-token --domain grow --domain-owner 905418000668 --query authorizationToken --output text)
+
+uv sync --all-groups

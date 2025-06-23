@@ -1,0 +1,4 @@
+#!/bin/bash
+
+export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token --domain grow --domain-owner 905418000668 --query authorizationToken --output text)
+echo "Token refreshed"

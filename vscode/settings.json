@@ -26,10 +26,11 @@
         "editor.detectIndentation": false
     },
     "liveshare.authenticationProvider": "GitHub",
-    "workbench.editor.enablePreview": false,
     "security.workspace.trust.untrustedFiles": "open",
     "ruby.codeCompletion": "rcodetools",
     "go.toolsManagement.autoUpdate": true,
     "redhat.telemetry.enabled": false,
-    "editor.minimap.enabled": false
+    "editor.minimap.enabled": false,
+    "workbench.editor.enablePreview": false,
+    "ruff.lint.run": "onSave",
 }

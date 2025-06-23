@@ -37,5 +37,15 @@
         "key": "shift+enter",
         "command": "-python.execSelectionInTerminal",
         "when": "editorTextFocus && !findInputFocussed && !jupyter.ownsSelection && !notebookEditorFocused && !replaceInputFocussed && editorLangId == 'python'"
+    },
+    {
+        "key": "alt+enter",
+        "command": "editor.action.quickFix",
+        "when": "editorHasCodeActionsProvider && textInputFocus && !editorReadonly"
+    },
+    {
+        "key": "cmd+.",
+        "command": "-editor.action.quickFix",
+        "when": "editorHasCodeActionsProvider && textInputFocus && !editorReadonly"
     }
 ]

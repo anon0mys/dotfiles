@@ -107,6 +107,7 @@ alias evim='vim ~/dotfiles-local/vimrc.local'
 alias ezsh='vim ~/dotfiles-local/zshrc.local'
 alias gca='git commit --amend --no-edit'
 alias s='rspec'
+alias p='pytest'
 alias tctl="docker exec temporal-admin-tools tctl"
 
 eval "$(/opt/homebrew/bin/brew shellenv)"
@@ -142,6 +143,10 @@ export PATH="$PATH:/Applications/PyCharm.app/Contents/MacOS"
 export MY_REPO="/Users/workmac/grow/Grow-Dashboard"
 export GROW_HOME=$MY_REPO
 export FLASK_ENV="local"
+export SQLALCHEMY_DATABASE_URI=postgresql://grow:grow@127.0.0.1/db
+export AWS_PROFILE=grow-grow-therapy-engineering
+
+getCAToken() { export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token --domain grow --domain-owner 905418000668 --query authorizationToken --output text) }
 
 # Peloton stuff
 
