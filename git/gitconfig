@@ -17,4 +17,20 @@
 [pager]
 	branch = false
 [core]
-	excludesfile = /Users/workmac/.gitignore
+	excludesfile = /Users/evan.wheeler/.gitignore
+	pager = delta
+
+[interactive]
+	diffFilter = delta --color-only
+
+[delta]
+	navigate = true
+	side-by-side = true
+	line-numbers = true
+	syntax-theme = OneHalfDark
+
+[merge]
+	conflictstyle = zdiff3
+
+[diff]
+	colorMoved = default

@@ -1,0 +1,13 @@
+# Ignore all runtime state
+*
+
+# Track config files
+!.gitignore
+!CLAUDE.md
+!settings.json
+
+# Track slash commands and agents
+!commands/
+!commands/**
+!agents/
+!agents/**

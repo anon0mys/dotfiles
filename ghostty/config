@@ -1,0 +1,31 @@
+# Theme (OneDark to match neovim and tmux)
+theme = Atom One Dark
+
+# Font
+font-size = 14
+font-family = JetBrains Mono
+adjust-cell-height = 20%
+
+# Window
+window-padding-x = 8
+window-padding-y = 4
+window-decoration = true
+macos-titlebar-style = tabs
+confirm-close-surface = false
+
+# Terminal behavior
+copy-on-select = clipboard
+mouse-shift-capture = false
+mouse-hide-while-typing = true
+scrollback-limit = 50000
+
+# Notifications
+auto-update = check
+desktop-notifications = true
+
+# Keybindings — keep it minimal, tmux handles panes
+keybind = super+c=copy_to_clipboard
+keybind = super+v=paste_from_clipboard
+keybind = super+t=new_tab
+keybind = super+w=close_surface
+keybind = super+shift+enter=new_window

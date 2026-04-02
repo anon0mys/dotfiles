@@ -103,8 +103,8 @@ alias django-s='./manage.py runserver'
 alias das='shell-plus'
 alias dc='docker compose'
 alias k='kubectl'
-alias evim='vim ~/dotfiles-local/vimrc.local'
-alias ezsh='vim ~/dotfiles-local/zshrc.local'
+alias evim='nvim ~/dotfiles/nvim/init.lua'
+alias ezsh='nvim ~/dotfiles-local/zshrc.local'
 alias gca='git commit --amend --no-edit'
 alias s='rspec'
 alias p='pytest'
@@ -133,10 +133,12 @@ pyenv virtualenvwrapper
 export ANDROID_HOME=/Users/$USER/Library/Android/sdk
 export ANDROID_SDK_ROOT=/Users/$USER/Library/Android/sdk
 export ANDROID_SDK=/Users/$USER/Library/Android/sdk
+export PATH=$PATH:$ANDROID_HOME/emulator
 export PATH=${PATH}:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
 
 export PATH="$PATH:/Applications/IntelliJ IDEA.app/Contents/MacOS"
 export PATH="$PATH:/Applications/PyCharm.app/Contents/MacOS"
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home
 
 # Grow stuff
 
@@ -251,6 +253,67 @@ if [ -f '/Users/evan.wheeler/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/ev
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/evan.wheeler/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/evan.wheeler/google-cloud-sdk/completion.zsh.inc'; fi
 
+# ---- Worktree + Tmux (tw command is in ~/bin/tw) ----
+# Tab completion for tw
+_tw_complete() {
+  local -a worktrees
+  local root wt_dir
+
+  root="$(git rev-parse --show-toplevel 2>/dev/null)" || return
+  wt_dir="$root/.claude/worktrees"
+
+  if (( CURRENT == 2 )); then
+    worktrees=()
+    if [[ -d "$wt_dir" ]]; then
+      worktrees=(${${(M)${(f)"$(command ls "$wt_dir" 2>/dev/null)"}:#wt-*}#wt-})
+    fi
+    _alternative \
+      'subcommands:subcommand:(rm)' \
+      "worktrees:worktree:($worktrees)"
+  elif (( CURRENT == 3 )) && [[ "${words[2]}" == "rm" ]]; then
+    worktrees=()
+    if [[ -d "$wt_dir" ]]; then
+      worktrees=(${${(M)${(f)"$(command ls "$wt_dir" 2>/dev/null)"}:#wt-*}#wt-})
+    fi
+    _describe 'worktree' worktrees
+  fi
+}
+compdef _tw_complete tw
+
+# ---- Editor ----
+export EDITOR="nvim"
+export VISUAL="nvim"
+alias vim="nvim"
+alias vi="nvim"
+
+# ---- zoxide (smart cd) ----
+eval "$(zoxide init zsh)"
+
+# ---- fzf ----
+source <(fzf --zsh)
+export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
+
+# ---- bat ----
+export BAT_THEME="OneHalfDark"
+export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+
+# ---- eza (better ls) ----
+alias ls="eza --icons"
+alias ll="eza --icons -la"
+alias lt="eza --icons --tree --level=2"
+
+# ---- tmux helpers ----
+ts() { tmux new-session -A -s "${1:-main}"; }
+alias tl="tmux list-sessions"
+alias tk="tmux kill-session -t"
+
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+export PATH="$HOME/.local/bin:$PATH"

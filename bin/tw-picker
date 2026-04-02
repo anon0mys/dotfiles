@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# fzf session picker for tmux with Claude status indicators.
+# Called by tmux keybinding (Ctrl+b f).
+
+STATUS_DIR="$HOME/.claude/workstream-status"
+
+sessions="$(tmux list-sessions -F '#S' 2>/dev/null)" || exit 0
+[ -z "$sessions" ] && exit 0
+
+# Build display lines with status
+display=""
+while IFS= read -r session; do
+  icon="⚪"
+  label="active"
+
+  if [ -f "$STATUS_DIR/$session" ]; then
+    state="$(cat "$STATUS_DIR/$session")"
+    case "$state" in
+      needs-input)  icon="🔴"; label="needs input" ;;
+      idle)         icon="🟡"; label="idle" ;;
+      working)      icon="🟢"; label="working" ;;
+    esac
+  fi
+
+  line="$(printf "%s %-35s %s" "$icon" "$session" "$label")"
+  if [ -z "$display" ]; then
+    display="$line"
+  else
+    display="$display
+$line"
+  fi
+done <<< "$sessions"
+
+# Sort: needs-input first, then idle, then working, then rest
+sorted="$(echo "$display" | sort -t' ' -k1,1 -s)"
+
+# Run fzf and extract session name
+selected="$(echo "$sorted" | fzf --ansi --no-sort --reverse --prompt="switch to: " --height=40%)" || exit 0
+
+# Extract session name (second field, between icon and status label)
+session_name="$(echo "$selected" | awk '{print $2}')"
+
+[ -z "$session_name" ] && exit 0
+
+tmux switch-client -t "$session_name"

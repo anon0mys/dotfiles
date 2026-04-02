@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+# Unified Claude Code status tracker.
+# Called by hooks: Notification, UserPromptSubmit, Stop
+#
+# Usage: claude-status <state> [message]
+#   state: working | idle | needs-input
+
+set -e
+
+STATUS_DIR="$HOME/.claude/workstream-status"
+mkdir -p "$STATUS_DIR"
+
+state="${1:-unknown}"
+message="${2:-}"
+
+# Read hook input from stdin if available (Notification passes JSON)
+if [ "$state" = "needs-input" ] && [ -t 0 ] && [ -z "$message" ]; then
+  message="Needs attention"
+elif [ "$state" = "needs-input" ] && [ ! -t 0 ]; then
+  input="$(cat)"
+  message="$(echo "$input" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('message','Needs attention'))" 2>/dev/null || echo "Needs attention")"
+fi
+
+# Determine tmux session name
+session=""
+if [ -n "$TMUX" ]; then
+  session="$(tmux display-message -p '#S' 2>/dev/null || true)"
+fi
+if [ -z "$session" ]; then
+  session="$(tmux list-panes -a -F '#{pane_pid} #{session_name}' 2>/dev/null \
+    | awk -v ppid="$PPID" '$1 == ppid { print $2 }' | head -1)"
+fi
+
+[ -z "$session" ] && exit 0
+
+# Write status
+echo "$state" > "$STATUS_DIR/$session"
+
+# Send macOS notification only for needs-input
+if [ "$state" = "needs-input" ]; then
+  title="Claude: $session"
+  if command -v terminal-notifier &>/dev/null; then
+    terminal-notifier -title "$title" -message "$message" -sound default -group "claude-$session"
+  else
+    osascript -e "display notification \"$message\" with title \"$title\" sound name \"default\""
+  fi
+fi

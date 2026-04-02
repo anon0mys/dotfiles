@@ -1,4 +1,4 @@
 # Conditions for alternate identities
 
-[includeIf "gitdir:~/grow/"]
-    path = ./grow
+[includeIf "gitdir:~/nourish/"]
+    path = ./nourish

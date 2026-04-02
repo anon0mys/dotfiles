@@ -16,3 +16,5 @@ log/*.log
 rerun.txt
 tmp/**/*
 /tags
+tsconfig.tsbuildinfo
+.claude/

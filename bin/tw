@@ -1,0 +1,315 @@
+#!/usr/bin/env bash
+# Unified worktree + tmux workstream manager.
+#
+# Usage:
+#   tw                          List worktrees and tmux sessions
+#   tw <name> [base]            Create worktree + workstream (or switch if exists)
+#   tw rm <name>                Remove worktree + kill tmux session
+#
+# Worktrees are created relative to the git repo root. If a .worktree-setup.sh
+# exists in the repo root, it's called after worktree creation with the
+# worktree path as $1.
+
+set -e
+
+# ---- Helpers ----
+
+repo_root() {
+  git rev-parse --show-toplevel 2>/dev/null
+}
+
+wt_dir() {
+  local root="$1"
+  echo "$root/.claude/worktrees"
+}
+
+session_name() {
+  # Replace dots with dashes — tmux uses . as a pane delimiter
+  echo "wt-${1//./-}"
+}
+
+attach_or_switch() {
+  local name="$1"
+  if [ -n "$TMUX" ]; then
+    tmux switch-client -t "$name"
+  else
+    tmux attach-session -t "$name"
+  fi
+}
+
+create_workstream() {
+  local name="$1"
+  local dir="$2"
+
+  # If tmux session exists, just switch to it
+  if tmux has-session -t "$name" 2>/dev/null; then
+    attach_or_switch "$name"
+    return 0
+  fi
+
+  # Create session with 3-pane layout
+  tmux new-session -d -s "$name" -c "$dir" -x "$(tput cols)" -y "$(tput lines)"
+  tmux split-window -h -t "$name" -c "$dir" -l 50%
+  tmux split-window -v -t "$name" -c "$dir" -l 40%
+  tmux send-keys -t "$name:.3" "lazygit" Enter
+  tmux select-pane -t "$name:.1"
+  tmux send-keys -t "$name:.1" "nvim ." Enter
+
+  attach_or_switch "$name"
+}
+
+fuzzy_match() {
+  local dir="$1" name="$2"
+  local matches=()
+
+  if [ ! -d "$dir" ]; then
+    return 1
+  fi
+
+  for d in "$dir"/*/; do
+    [ -d "$d" ] || continue
+    local bn="$(basename "$d")"
+    if [[ "$bn" == *"$name"* ]]; then
+      matches+=("$bn")
+    fi
+  done
+
+  if [ ${#matches[@]} -eq 0 ]; then
+    return 1
+  elif [ ${#matches[@]} -eq 1 ]; then
+    echo "${matches[0]}"
+    return 0
+  else
+    echo "Multiple matches for '$name':" >&2
+    for m in "${matches[@]}"; do echo "  $m" >&2; done
+    return 1
+  fi
+}
+
+# ---- Commands ----
+
+cmd_list() {
+  local root
+  root="$(repo_root)" || { echo "Not in a git repo."; exit 1; }
+
+  echo "Worktrees:"
+  git -C "$root" worktree list | while IFS= read -r line; do
+    local wt_path="${line%% *}"
+    local rest="${line#* }"
+    local short="$(basename "$wt_path")"
+    [ "$wt_path" = "$root" ] && short="(main)"
+    printf "  %-35s %s\n" "$short" "$rest"
+  done
+
+  echo ""
+  echo "Tmux sessions:"
+  tmux list-sessions 2>/dev/null | while IFS= read -r line; do
+    echo "  $line"
+  done || echo "  (none)"
+}
+
+cmd_new() {
+  local name="$1"
+  local base="${2:-HEAD}"
+
+  if [ -z "$name" ]; then
+    echo "Usage: tw <name> [base-branch]"
+    exit 1
+  fi
+
+  local root
+  root="$(repo_root)" || { echo "Not in a git repo."; exit 1; }
+
+  local wtd="$(wt_dir "$root")"
+  local dir_name="wt-$name"
+  local wt_path="$wtd/$dir_name"
+  local sname="$(session_name "$name")"
+
+  # If worktree already exists (exact match), just open the workstream
+  if [ -d "$wt_path" ]; then
+    echo "Worktree '$dir_name' exists, opening workstream..."
+    create_workstream "$sname" "$wt_path"
+    return 0
+  fi
+
+  # Fuzzy match against existing worktrees
+  local resolved
+  if resolved="$(fuzzy_match "$wtd" "$name" 2>/dev/null)"; then
+    local resolved_path="$wtd/$resolved"
+    # Strip wt- prefix to get the original name for session
+    local resolved_name="${resolved#wt-}"
+    local resolved_sname="$(session_name "$resolved_name")"
+    echo "Matched worktree '$resolved', opening workstream..."
+    create_workstream "$resolved_sname" "$resolved_path"
+    return 0
+  fi
+
+  # Fuzzy match against existing tmux sessions
+  local session_match
+  session_match="$(tmux list-sessions -F '#S' 2>/dev/null | grep -i "$name" | head -1)"
+  if [ -n "$session_match" ]; then
+    echo "Matched session '$session_match', switching..."
+    attach_or_switch "$session_match"
+    return 0
+  fi
+
+  # Determine branch name from git user
+  local git_user
+  git_user="$(git config user.name 2>/dev/null | tr ' ' '.' | tr '[:upper:]' '[:lower:]')"
+  local branch_name="${git_user:+$git_user/}$name"
+
+  # Create worktree
+  mkdir -p "$wtd"
+  if git -C "$root" show-ref --verify --quiet "refs/heads/$branch_name"; then
+    echo "Branch '$branch_name' exists, checking out..."
+    git -C "$root" worktree add "$wt_path" "$branch_name" || exit 1
+  else
+    echo "Creating branch '$branch_name' from $base..."
+    git -C "$root" worktree add -b "$branch_name" "$wt_path" "$base" || exit 1
+  fi
+
+  # Run project-level setup hook if it exists
+  # Supports: .worktree-setup.sh at repo root, or .claude/hooks/worktree-setup.sh,
+  # or worktree_setup.py (called from inside the worktree dir with main repo as arg)
+  if [ -f "$root/.worktree-setup.sh" ]; then
+    echo ""
+    echo "Running .worktree-setup.sh..."
+    bash "$root/.worktree-setup.sh" "$wt_path" "$root"
+  elif [ -f "$wt_path/worktree_setup.py" ]; then
+    echo ""
+    echo "Running worktree_setup.py..."
+    (cd "$wt_path" && python3 worktree_setup.py "$root")
+  fi
+
+  echo ""
+  echo "Done. Opening workstream..."
+  create_workstream "$sname" "$wt_path"
+}
+
+cmd_rm() {
+  local name="$1"
+
+  if [ -z "$name" ]; then
+    echo "Usage: tw rm <name>"
+    exit 1
+  fi
+
+  local root
+  root="$(repo_root)" || { echo "Not in a git repo."; exit 1; }
+
+  local wtd="$(wt_dir "$root")"
+
+  # Resolve name (exact or fuzzy)
+  local resolved="wt-$name"
+  if [ ! -d "$wtd/$resolved" ]; then
+    resolved="$(fuzzy_match "$wtd" "$name")" || exit 1
+  fi
+
+  # Derive session name from resolved worktree name
+  local resolved_name="${resolved#wt-}"
+  local sname="$(session_name "$resolved_name")"
+
+  local wt_path="$wtd/$resolved"
+  local branch="$(git -C "$wt_path" rev-parse --abbrev-ref HEAD 2>/dev/null)"
+
+  echo "Will remove:"
+  echo "  Worktree: $wt_path"
+  [ -n "$branch" ] && echo "  Branch:   $branch"
+  tmux has-session -t "$sname" 2>/dev/null && echo "  Session:  $sname"
+  echo ""
+  read -p "Proceed? [y/N] " confirm
+  [ "$confirm" = "y" ] || [ "$confirm" = "Y" ] || exit 0
+
+  # Kill tmux session if it exists
+  tmux kill-session -t "$sname" 2>/dev/null && echo "Session '$sname' killed."
+
+  # Remove worktree
+  git -C "$root" worktree remove "$wt_path" 2>/dev/null || {
+    echo "Worktree has uncommitted changes."
+    read -p "Force remove (discards changes)? [y/N] " force
+    [ "$force" = "y" ] || [ "$force" = "Y" ] || exit 1
+    git -C "$root" worktree remove --force "$wt_path" || exit 1
+  }
+  echo "Worktree removed."
+
+  # Offer to delete branch
+  if [ -n "$branch" ] && [ "$branch" != "HEAD" ]; then
+    read -p "Delete branch '$branch'? [y/N] " delbranch
+    if [ "$delbranch" = "y" ] || [ "$delbranch" = "Y" ]; then
+      git -C "$root" branch -D "$branch" 2>/dev/null && echo "Branch deleted."
+    fi
+  fi
+}
+
+cmd_status() {
+  # Check all wt-* tmux sessions and report what each pane is doing
+  local sessions
+  sessions="$(tmux list-sessions -F '#S' 2>/dev/null | grep '^wt-' || true)"
+  local status_dir="$HOME/.claude/workstream-status"
+
+  if [ -z "$sessions" ]; then
+    echo "No active workstreams."
+    # Clean up orphaned status files
+    rm -f "$status_dir"/* 2>/dev/null
+    return 0
+  fi
+
+  # Clean up status files for sessions that no longer exist
+  for f in "$status_dir"/*; do
+    [ -f "$f" ] || continue
+    local stale_session="$(basename "$f")"
+    if ! echo "$sessions" | grep -qx "$stale_session"; then
+      rm -f "$f"
+    fi
+  done
+
+  printf "%-35s %s\n" "WORKSTREAM" "STATUS"
+  printf "%-35s %s\n" "---" "---"
+
+  while IFS= read -r session; do
+    local claude=""
+
+    # Check if Claude process is running in any pane
+    local has_claude=false
+    while IFS=' ' read -r idx cmd; do
+      case "$cmd" in
+        nvim|vim|vi|lazygit|zsh|bash|fish) ;;
+        *) has_claude=true ;;
+      esac
+    done < <(tmux list-panes -t "$session" -F "#{pane_index} #{pane_current_command}" 2>/dev/null)
+
+    if [ "$has_claude" = true ] && [ -f "$status_dir/$session" ]; then
+      local state
+      state="$(cat "$status_dir/$session")"
+      case "$state" in
+        needs-input)  claude="🔴 needs input" ;;
+        idle)         claude="🟡 idle" ;;
+        working)      claude="🟢 working" ;;
+        *)            claude="⚪ active" ;;
+      esac
+    elif [ "$has_claude" = true ]; then
+      claude="⚪ active"
+    else
+      claude="⚫ not running"
+    fi
+
+    printf "%-35s %s\n" "$session" "$claude"
+  done <<< "$sessions"
+}
+
+# ---- Main ----
+
+case "${1:-}" in
+  "")       cmd_status ;;
+  ls)       cmd_list ;;
+  rm)       cmd_rm "$2" ;;
+  status|s) cmd_status ;;
+  -h|--help)
+    echo "Usage:"
+    echo "  tw                    List worktrees and tmux sessions"
+    echo "  tw <name> [base]      Create worktree + workstream (or switch if exists)"
+    echo "  tw rm <name>          Remove worktree, kill session, optionally delete branch"
+    echo "  tw status             Show status of all workstream Claude sessions"
+    ;;
+  *)        cmd_new "$@" ;;
+esac

@@ -13,6 +13,10 @@
     ~/bin: bin        
     ~/.zshrc: zshrc
     ~/.vimrc: vimrc
+    ~/.config/ghostty/config: ghostty/config
+    ~/.config/nvim: nvim
+    ~/.tmux.conf: tmux/tmux.conf
+    ~/.claude: claude
 
 - shell:
   - git submodule sync --recursive
@@ -28,6 +32,11 @@
     stdin: true
     stdout: true
     stderr: true
+  - command: nvim --headless "+Lazy! sync" +qa
+    description: Installing Neovim plugins via lazy.nvim
+    stdin: true
+    stdout: true
+    stderr: true
   - command: ./scripts/setup-brew.sh
     description: Installing Homebrew
     stdin: true
@@ -37,15 +46,3 @@
     description: Installing Homebrew formulas from Brewfile
     stderr: true
     stdout: true
-  - command: ./scripts/vscode-import-ext.sh
-    stdout: true
-    stderr: true
-    description: Install VS Code extensions
-
-- link:
-    ~/Library/Application Support/Code/User/settings.json:
-      path: vscode/settings.json
-      force: true
-    ~/Library/Application Support/Code/User/keybindings.json:
-      path: vscode/keybindings.json
-      force: true
