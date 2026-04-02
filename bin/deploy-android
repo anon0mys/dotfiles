@@ -1,0 +1,102 @@
+#!/bin/bash
+
+set -e  # Exit on error
+
+# Path to the Android project
+PROJECT_DIR="$HOME/personal-projects/odyssey/odyssey-android"
+GRADLE_PROPS="$PROJECT_DIR/gradle.properties"
+
+# Change to project directory
+cd "$PROJECT_DIR"
+
+# Check if gradle.properties exists
+if [ ! -f "$GRADLE_PROPS" ]; then
+    echo "Error: gradle.properties not found at $GRADLE_PROPS"
+    exit 1
+fi
+
+# Read current version from gradle.properties
+VERSION_MAJOR=$(grep "^VERSION_MAJOR=" "$GRADLE_PROPS" | cut -d'=' -f2)
+VERSION_MINOR=$(grep "^VERSION_MINOR=" "$GRADLE_PROPS" | cut -d'=' -f2)
+VERSION_PATCH=$(grep "^VERSION_PATCH=" "$GRADLE_PROPS" | cut -d'=' -f2)
+VERSION_BUILD=$(grep "^VERSION_BUILD=" "$GRADLE_PROPS" | cut -d'=' -f2)
+
+echo "Current version: $VERSION_MAJOR.$VERSION_MINOR.$VERSION_PATCH (Build $VERSION_BUILD)"
+echo ""
+
+# Prompt for release type
+echo "Select release type:"
+echo "  1) Major (breaking changes) - $VERSION_MAJOR.$VERSION_MINOR.$VERSION_PATCH -> $((VERSION_MAJOR + 1)).0.0"
+echo "  2) Minor (new features)      - $VERSION_MAJOR.$VERSION_MINOR.$VERSION_PATCH -> $VERSION_MAJOR.$((VERSION_MINOR + 1)).0"
+echo "  3) Patch (bug fixes)         - $VERSION_MAJOR.$VERSION_MINOR.$VERSION_PATCH -> $VERSION_MAJOR.$VERSION_MINOR.$((VERSION_PATCH + 1))"
+echo "  4) Build only (no version change)"
+echo ""
+read -p "Enter choice [1-4]: " choice
+
+# Calculate new version based on choice
+case $choice in
+    1)
+        NEW_MAJOR=$((VERSION_MAJOR + 1))
+        NEW_MINOR=0
+        NEW_PATCH=0
+        RELEASE_TYPE="major"
+        ;;
+    2)
+        NEW_MAJOR=$VERSION_MAJOR
+        NEW_MINOR=$((VERSION_MINOR + 1))
+        NEW_PATCH=0
+        RELEASE_TYPE="minor"
+        ;;
+    3)
+        NEW_MAJOR=$VERSION_MAJOR
+        NEW_MINOR=$VERSION_MINOR
+        NEW_PATCH=$((VERSION_PATCH + 1))
+        RELEASE_TYPE="patch"
+        ;;
+    4)
+        NEW_MAJOR=$VERSION_MAJOR
+        NEW_MINOR=$VERSION_MINOR
+        NEW_PATCH=$VERSION_PATCH
+        RELEASE_TYPE="build"
+        ;;
+    *)
+        echo "Invalid choice. Exiting."
+        exit 1
+        ;;
+esac
+
+# Always increment build number
+NEW_BUILD=$((VERSION_BUILD + 1))
+
+echo ""
+echo "New version will be: $NEW_MAJOR.$NEW_MINOR.$NEW_PATCH (Build $NEW_BUILD)"
+read -p "Proceed with deployment? [y/N]: " confirm
+
+if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+    echo "Deployment cancelled."
+    exit 0
+fi
+
+# Update gradle.properties
+echo ""
+echo "Updating version in gradle.properties..."
+sed -i.bak \
+    -e "s/^VERSION_MAJOR=.*/VERSION_MAJOR=$NEW_MAJOR/" \
+    -e "s/^VERSION_MINOR=.*/VERSION_MINOR=$NEW_MINOR/" \
+    -e "s/^VERSION_PATCH=.*/VERSION_PATCH=$NEW_PATCH/" \
+    -e "s/^VERSION_BUILD=.*/VERSION_BUILD=$NEW_BUILD/" \
+    "$GRADLE_PROPS"
+
+# Remove backup file
+rm -f "${GRADLE_PROPS}.bak"
+
+echo "Version updated to $NEW_MAJOR.$NEW_MINOR.$NEW_PATCH (Build $NEW_BUILD)"
+echo ""
+
+# Run the deployment
+echo "Starting Firebase deployment..."
+firebase login --reauth && ./gradlew clean assembleRelease appDistributionUploadRelease
+
+echo ""
+echo "✅ Deployment complete!"
+echo "Version: $NEW_MAJOR.$NEW_MINOR.$NEW_PATCH (Build $NEW_BUILD)"

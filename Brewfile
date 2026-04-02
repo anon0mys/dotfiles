@@ -23,6 +23,7 @@ brew "neovim"
 brew "watch"
 brew "saml2aws"
 brew "yarn"
+brew "gum"
 
 # Claude Code workflow tools
 brew "ripgrep"

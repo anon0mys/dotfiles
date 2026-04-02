@@ -18,3 +18,5 @@ tmp/**/*
 /tags
 tsconfig.tsbuildinfo
 .claude/
+.cursorrules
+.omc/

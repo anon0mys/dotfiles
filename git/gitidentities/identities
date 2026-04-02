@@ -2,3 +2,9 @@
 
 [includeIf "gitdir:~/nourish/"]
     path = ./nourish
+
+[includeIf "gitdir:~/Clients/"]
+    path = ./aceris
+
+[includeIf "gitdir:~/personal-projects/odyssey/"]
+    path = ./aceris

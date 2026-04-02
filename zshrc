@@ -123,6 +123,11 @@ export PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV="true"
 export PATH="$HOME/.exenv/bin:$PATH"
 eval "$(rbenv init -)"
 eval "$(pyenv init -)"
+eval "$(goenv init -)"
+
+eval "$(direnv hook zsh)"
+
+export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 
 export VIRTUAL_ENV_DISABLE_PROMPT=1
 export ZSH_THEME_VIRTUALENV_PREFIX='('
@@ -139,6 +144,12 @@ export PATH=${PATH}:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
 export PATH="$PATH:/Applications/IntelliJ IDEA.app/Contents/MacOS"
 export PATH="$PATH:/Applications/PyCharm.app/Contents/MacOS"
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home
+
+# Spring sucks
+export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
+
+# Gcloud sucks too
+export CLOUDSDK_PYTHON=$(pyenv which python)
 
 # Grow stuff
 
@@ -248,10 +259,10 @@ KUBE_PS1_CTX_COLOR="blue"
 PROMPT='$(virtualenv_prompt_info) $(kube_ps1) '$PROMPT
 
 # The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/evan.wheeler/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/evan.wheeler/google-cloud-sdk/path.zsh.inc'; fi
+if [ -f '/Users/aceris/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/aceris/google-cloud-sdk/path.zsh.inc'; fi
 
 # The next line enables shell command completion for gcloud.
-if [ -f '/Users/evan.wheeler/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/evan.wheeler/google-cloud-sdk/completion.zsh.inc'; fi
+if [ -f '/Users/aceris/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/aceris/google-cloud-sdk/completion.zsh.inc'; fi
 
 # ---- Worktree + Tmux (tw command is in ~/bin/tw) ----
 # Tab completion for tw

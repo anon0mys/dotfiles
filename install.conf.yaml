@@ -46,3 +46,8 @@
     description: Installing Homebrew formulas from Brewfile
     stderr: true
     stdout: true
+  - command: ./scripts/setup-teleport.sh
+    description: Installing teleport cli
+    stdin: true
+    stdout: true
+    stderr: true

@@ -17,7 +17,7 @@
 [pager]
 	branch = false
 [core]
-	excludesfile = /Users/evan.wheeler/.gitignore
+	excludesfile = /Users/aceris/.gitignore
 	pager = delta
 
 [interactive]

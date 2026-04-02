@@ -29,6 +29,7 @@
   "redhat.telemetry.enabled": false,
   "editor.minimap.enabled": false,
   "ruff.lint.run": "onSave",
+  "editor.acceptSuggestionOnCommitCharacter": false,
   "claudeCode.preferredLocation": "sidebar",
   "viraTheme.accent": "Indigo",
   "workbench.colorCustomizations": {
@@ -124,7 +125,9 @@
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
   },
-  "claudeCode.selectedModel": "default",
+  "claudeCode.selectedModel": "claude-opus-4-6",
+  "kotlin.languageServer.enabled": false,
+  "kotlin.debugAdapter.enabled": false,
   "gitlens.showWhatsNewAfterUpgrades": false,
   "gitlens.currentLine.enabled": false,
   "gitlens.codeLens.authors.enabled": false,
