@@ -17,7 +17,7 @@
 [pager]
 	branch = false
 [core]
-	excludesfile = /Users/aceris/.gitignore
+	excludesfile = ~/dotfiles/git/gitignore
 	pager = delta
 
 [interactive]
