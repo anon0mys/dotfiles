@@ -6,6 +6,7 @@
 .env
 .git/
 .idea/
+.serena/
 /bower_components/
 /log
 /node_modules/

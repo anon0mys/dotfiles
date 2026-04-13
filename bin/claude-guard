@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# PreToolUse hook: block dangerous bash commands before execution
+# Reads tool event JSON from stdin, exits 2 to block
+
+data=$(cat)
+command=$(python3 -c "
+import sys, json
+try:
+    d = json.loads(sys.argv[1])
+    print(d.get('tool_input', {}).get('command', ''))
+except Exception:
+    print('')
+" "$data" 2>/dev/null)
+
+[ -z "$command" ] && exit 0
+
+# Patterns that require explicit user confirmation
+DANGEROUS_PATTERNS=(
+  'rm -rf'
+  'rm -fr'
+  'git push[[:space:]].*--force'
+  'git push[[:space:]].*-f[[:space:]]'
+  'git push[[:space:]].*-f$'
+  'git reset --hard'
+  'DROP TABLE'
+  'DROP DATABASE'
+  'TRUNCATE TABLE'
+  'git clean -f'
+  '>.*authorized_keys'
+  'chmod.*777'
+)
+
+for pattern in "${DANGEROUS_PATTERNS[@]}"; do
+  if echo "$command" | grep -qE "$pattern"; then
+    echo "BLOCKED: Dangerous command matched pattern '$pattern'."
+    echo "Command: $command"
+    echo "Ask the user to confirm before running this."
+    exit 2
+  fi
+done
+
+exit 0

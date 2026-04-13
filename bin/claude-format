@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# PostToolUse hook: auto-format files after Write/Edit tool calls
+# Reads tool event JSON from stdin
+
+data=$(cat)
+file_path=$(python3 -c "
+import sys, json
+try:
+    d = json.loads(sys.argv[1])
+    print(d.get('tool_input', {}).get('file_path', ''))
+except Exception:
+    print('')
+" "$data" 2>/dev/null)
+
+[ -z "$file_path" ] && exit 0
+[ ! -f "$file_path" ] && exit 0
+
+# Run prettier if a config file is discoverable
+dir="$file_path"
+while [ "$dir" != "/" ]; do
+  dir=$(dirname "$dir")
+  for cfg in .prettierrc .prettierrc.json .prettierrc.yml .prettierrc.js prettier.config.js prettier.config.cjs; do
+    [ -f "$dir/$cfg" ] && {
+      npx --no prettier --write "$file_path" 2>/dev/null
+      break 2
+    }
+  done
+done
+
+# Run eslint --fix on JS/TS files
+case "$file_path" in
+  *.ts|*.tsx|*.js|*.jsx|*.mts|*.cts)
+    npx --no eslint --fix "$file_path" 2>/dev/null
+    ;;
+esac
+
+exit 0

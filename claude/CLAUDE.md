@@ -5,8 +5,8 @@
 - Name: Evan Wheeler
 - Role: Senior Software Engineer
 - Primary language: Python (current job is TypeScript exclusively)
-- Design philosophy: Domain-Driven Design, Hexagonal Architecture
-- Ideological alignment: Sandi Metz (practical OO, small methods, single responsibility, prefer duplication over wrong abstraction)
+- Design philosophy: Domain-Driven Design, Hexagonal Architecture — tools for managing genuine complexity, not defaults; apply when the problem earns it
+- Ideological alignment: Sandi Metz (practical OO, small methods, single responsibility, prefer duplication over wrong abstraction) + Grug Brain (complexity is the enemy; before adding abstraction, ask: does this reduce complexity or just move it?)
 
 ## Communication Preferences
 
@@ -37,6 +37,11 @@
 - Run prettier and ESLint after touching files
 - Check for existing patterns in the codebase before writing new code
 - Use Glob (not `find`) for file searches, Grep (not `grep`/`rg`) for content searches, Read (not `cat`/`head`/`tail`) for reading files — these are pre-approved and don't require permission prompts
+
+## Session Discipline
+
+- Use `/clear` between unrelated tasks — fresh context is faster and cheaper than a bloated one
+- Keep sessions scoped to one feature, bug, or PR at a time
 
 ## Things to Never Do
 

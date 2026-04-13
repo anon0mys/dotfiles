@@ -1,6 +1,7 @@
 {
+  "model": "opusplan",
   "permissions": {
-    "allow": [
+"allow": [
       "Read",
       "Glob",
       "Grep",
@@ -31,12 +32,51 @@
       "Bash(git describe:*)",
       "Bash(git tag:*)",
       "Bash(git config:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
       "Bash(wc:*)",
       "Bash(docker:*)",
       "Agent"
     ]
   },
+  "mcpServers": {
+    "fetch": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-fetch"],
+      "type": "stdio"
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "$GITHUB_TOKEN"
+      },
+      "type": "stdio"
+    }
+  },
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/aceris/dotfiles/bin/claude-guard"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/aceris/dotfiles/bin/claude-format"
+          }
+        ]
+      }
+    ],
     "Notification": [
       {
         "matcher": "",
