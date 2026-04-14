@@ -36,7 +36,45 @@
       "Bash(cat:*)",
       "Bash(wc:*)",
       "Bash(docker:*)",
-      "Agent"
+      "Agent",
+      "mcp__claude_ai_Slack__slack_read_canvas",
+      "mcp__claude_ai_Slack__slack_read_channel",
+      "mcp__claude_ai_Slack__slack_read_thread",
+      "mcp__claude_ai_Slack__slack_read_user_profile",
+      "mcp__claude_ai_Slack__slack_search_channels",
+      "mcp__claude_ai_Slack__slack_search_public",
+      "mcp__claude_ai_Slack__slack_search_public_and_private",
+      "mcp__claude_ai_Slack__slack_search_users",
+      "mcp__claude_ai_Notion__notion-fetch",
+      "mcp__claude_ai_Notion__notion-get-comments",
+      "mcp__claude_ai_Notion__notion-get-teams",
+      "mcp__claude_ai_Notion__notion-get-users",
+      "mcp__claude_ai_Notion__notion-query-data-sources",
+      "mcp__claude_ai_Notion__notion-query-meeting-notes",
+      "mcp__claude_ai_Notion__notion-search",
+      "mcp__claude_ai_Linear__get_attachment",
+      "mcp__claude_ai_Linear__get_document",
+      "mcp__claude_ai_Linear__get_initiative",
+      "mcp__claude_ai_Linear__get_issue",
+      "mcp__claude_ai_Linear__get_issue_status",
+      "mcp__claude_ai_Linear__get_milestone",
+      "mcp__claude_ai_Linear__get_project",
+      "mcp__claude_ai_Linear__get_status_updates",
+      "mcp__claude_ai_Linear__get_team",
+      "mcp__claude_ai_Linear__get_user",
+      "mcp__claude_ai_Linear__list_comments",
+      "mcp__claude_ai_Linear__list_cycles",
+      "mcp__claude_ai_Linear__list_documents",
+      "mcp__claude_ai_Linear__list_initiatives",
+      "mcp__claude_ai_Linear__list_issue_labels",
+      "mcp__claude_ai_Linear__list_issue_statuses",
+      "mcp__claude_ai_Linear__list_issues",
+      "mcp__claude_ai_Linear__list_milestones",
+      "mcp__claude_ai_Linear__list_project_labels",
+      "mcp__claude_ai_Linear__list_projects",
+      "mcp__claude_ai_Linear__list_teams",
+      "mcp__claude_ai_Linear__list_users",
+      "mcp__claude_ai_Linear__search_documentation"
     ]
   },
   "mcpServers": {
@@ -61,7 +99,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/aceris/dotfiles/bin/claude-guard"
+            "command": "~/dotfiles/bin/claude-guard"
           }
         ]
       }
@@ -72,7 +110,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/aceris/dotfiles/bin/claude-format"
+            "command": "~/dotfiles/bin/claude-format"
           }
         ]
       }

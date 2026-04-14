@@ -123,9 +123,9 @@ export PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV="true"
 export PATH="$HOME/.exenv/bin:$PATH"
 eval "$(rbenv init -)"
 eval "$(pyenv init -)"
-eval "$(goenv init -)"
+command -v goenv &>/dev/null && eval "$(goenv init -)"
 
-eval "$(direnv hook zsh)"
+command -v direnv &>/dev/null && eval "$(direnv hook zsh)"
 
 export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 
