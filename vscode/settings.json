@@ -138,4 +138,7 @@
   "gitlens.hovers.pullRequests.enabled": false,
   "gitlens.hovers.autolinks.enabled": false,
   "workbench.editor.enablePreview": false,
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
 }

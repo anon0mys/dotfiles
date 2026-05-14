@@ -1,7 +1,6 @@
 {
-  "model": "opusplan",
   "permissions": {
-"allow": [
+    "allow": [
       "Read",
       "Glob",
       "Grep",
@@ -75,31 +74,18 @@
       "mcp__claude_ai_Linear__list_teams",
       "mcp__claude_ai_Linear__list_users",
       "mcp__claude_ai_Linear__search_documentation"
-    ]
+    ],
+    "defaultMode": "auto"
   },
-  "mcpServers": {
-    "fetch": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-fetch"],
-      "type": "stdio"
-    },
-    "github": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"],
-      "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "$GITHUB_TOKEN"
-      },
-      "type": "stdio"
-    }
-  },
+  "model": "opus[1m]",
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Bash",
+        "matcher": "Write|Edit|NotebookEdit",
         "hooks": [
           {
             "type": "command",
-            "command": "~/dotfiles/bin/claude-guard"
+            "command": "~/.claude/hooks/require-approval.py"
           }
         ]
       }
@@ -148,5 +134,35 @@
         ]
       }
     ]
-  }
+  },
+  "skipAutoPermissionPrompt": true,
+  "mcpServers": {
+    "fetch": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-fetch"
+      ],
+      "type": "stdio"
+    },
+    "github": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "$GITHUB_TOKEN"
+      },
+      "type": "stdio"
+    },
+    "atrium": {
+      "type": "stdio",
+      "command": "/Users/evan.wheeler/.nvm/versions/node/v20.19.6/bin/node",
+      "args": [
+        "/Users/evan.wheeler/atrium/out/mcp/atrium-mcp.mjs"
+      ]
+    }
+  },
+  "effortLevel": "medium"
 }
