@@ -99,6 +99,24 @@
             "command": "~/dotfiles/bin/claude-format"
           }
         ]
+      },
+      {
+        "matcher": "mcp__claude_ai_Notion__notion-fetch|mcp__claude_ai_Linear__get_document|mcp__claude_ai_Linear__get_issue|WebFetch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/cache-doc.py"
+          }
+        ]
+      },
+      {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/cache-read.py"
+          }
+        ]
       }
     ],
     "Notification": [
@@ -119,6 +137,10 @@
           {
             "type": "command",
             "command": "claude-status working"
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/load-doc-map.py"
           }
         ]
       }

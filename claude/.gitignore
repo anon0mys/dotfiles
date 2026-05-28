@@ -11,3 +11,12 @@
 !commands/**
 !agents/
 !agents/**
+
+# Track hook scripts and shared libraries (portable across machines)
+!hooks/
+!hooks/**
+!lib/
+!lib/**
+# But not Python bytecode caches
+__pycache__/
+*.pyc

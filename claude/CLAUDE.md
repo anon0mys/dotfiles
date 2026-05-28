@@ -94,6 +94,28 @@ If auto-mode and this section appear to conflict, this section wins.
 
 - Branch naming convention: `ewheeler/<ticket-if-exists>.<short-description>` — include the ticket when one exists, omit it when there isn't one (e.g. `ewheeler/PLFM-123.fix-fax-parsing` or `ewheeler/extract-fax-json-parse`)
 
+## Worktrees
+
+**One worktree per project, not per branch.** When a project (an Atrium workspace, a Linear initiative, a multi-PR effort) already has an established worktree, stay in it. Switch branches inside that worktree with `git checkout` — do not create a new worktree for each branch.
+
+Spinning up a worktree per branch fragments the project across directories, breaks `node_modules` sharing, multiplies setup cost, and makes it hard to track related work. The established worktree is the work area; branches are how you slice the work.
+
+Create a new worktree only when (a) no worktree exists for the project yet, or (b) the user explicitly asks for one.
+
+## Doc cache
+
+A PostToolUse hook (`~/.claude/hooks/cache-doc.py` + `cache-read.py`) writes every Notion / Linear / WebFetch / Read result into `<worktree>/.claude/doc-cache/` (or `~/.claude/doc-cache-global/` if not inside a worktree). A UserPromptSubmit hook injects `INDEX.md` as additional context on every turn. Source: `~/.claude/lib/doc_cache.py`.
+
+What this means for you:
+- **Before claiming a PRD / TRD / spec / Figma doc isn't available, check `INDEX.md`.** It's already in your context. If you don't see it, the cache is empty — fetch fresh, don't guess.
+- **Grep the cached files directly** — full text of external docs lives at the path listed in INDEX. `grep -n 'whatever' <cache-path>` is faster than refetching and won't blow out your context window.
+- **Code symbols** live in a sibling `CODE.md` that is *not* auto-injected. When you need to recall "what's defined in file X," grep CODE.md.
+- **Local docs and code files**: no content copy (the file is local — re-Read if needed). The cache stores their structure: section outlines for markdown, symbol locations for code, and which line ranges you've previously Read.
+- **Stale markers**: when a local file's mtime changes after caching, entries get a `[STALE]` tag. Treat staleness as "I looked at this before, but content has drifted."
+- The cache is per-worktree; other projects don't see it. It's not committed (covered by the global gitignore).
+
+Saying "I don't have access to the doc" without first checking INDEX.md is a violation of the verification rule above. The cache is the answer to "do I already have this?"
+
 ## Things to Never Do
 
 - Don't do git operations unless explicitly asked
