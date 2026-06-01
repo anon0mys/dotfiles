@@ -95,5 +95,10 @@
     "key": "alt+cmd+e",
     "command": "-copy-file-name.copyFileNameWithExtension",
     "when": "editorTextFocus"
+  },
+  {
+    "key": "alt+cmd+s",
+    "command": "workbench.action.toggleUnifiedSidebarFromKeyboard",
+    "when": "!isAuxiliaryWindowFocusedContext"
   }
 ]

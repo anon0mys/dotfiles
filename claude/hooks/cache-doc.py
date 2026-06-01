@@ -46,11 +46,18 @@ def main() -> int:
     cache_dir = find_cache_dir(cwd)
     records = prune(load_records(cache_dir), cache_dir)
 
-    # Dedupe key — re-fetching the same doc updates in place.
-    slug_base = slugify(f"{kind_prefix}-{title or source}")
-    # add a stable hash of the source so different docs with same title don't collide
-    key = f"{slug_base}-{short_hash(source)}"
-    cache_file = f"{key}.txt"
+    # Dedupe key is stable across title changes — source URL is the identity.
+    key = f"{kind_prefix}-{short_hash(source)}"
+    cache_file = f"{kind_prefix}-{slugify(title or source)}-{short_hash(source)}.txt"
+    # If the previous fetch produced a different filename (e.g. title changed
+    # because the redirect-handling fix surfaced the real doc title), drop the
+    # stale file so we don't accumulate duplicates.
+    prior = records.get(key)
+    if prior and prior.cache_path and prior.cache_path != cache_file:
+        try:
+            (cache_dir / prior.cache_path).unlink(missing_ok=True)
+        except OSError:
+            pass
     (cache_dir / cache_file).write_text(raw_text, encoding="utf-8")
 
     headings = extract_headings(raw_text)
@@ -118,6 +125,17 @@ def _unwrap(obj) -> tuple[str, str]:
     if obj is None:
         return "", ""
     if isinstance(obj, str):
+        # Harness redirect: when tool output exceeds the inline-result limit
+        # the conversation shows "Output has been saved to <path>." instead of
+        # the content. Read the saved payload so the cache reflects the actual
+        # doc, not the redirect notice.
+        redirect = re.search(r"Output has been saved to (\S+\.txt)", obj)
+        if redirect:
+            try:
+                with open(redirect.group(1), encoding="utf-8") as f:
+                    return _unwrap(f.read())
+            except OSError:
+                pass
         try:
             return _unwrap(json.loads(obj))
         except (json.JSONDecodeError, ValueError):
