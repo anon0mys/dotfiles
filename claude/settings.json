@@ -77,7 +77,6 @@
     ],
     "defaultMode": "auto"
   },
-  "model": "opus[1m]",
   "hooks": {
     "PreToolUse": [
       {
@@ -137,10 +136,6 @@
           {
             "type": "command",
             "command": "claude-status working"
-          },
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/load-doc-map.py"
           }
         ]
       }
@@ -157,6 +152,7 @@
       }
     ]
   },
+  "effortLevel": "high",
   "skipAutoPermissionPrompt": true,
   "mcpServers": {
     "fetch": {
@@ -186,5 +182,5 @@
       ]
     }
   },
-  "effortLevel": "medium"
+  "model": "claude-opus-4-7"
 }

@@ -139,6 +139,8 @@
   "gitlens.hovers.autolinks.enabled": false,
   "workbench.editor.enablePreview": false,
   "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
   },
+  "claudeCode.allowDangerouslySkipPermissions": true,
+  "chatgpt.followUpQueueMode": "queue",
 }
