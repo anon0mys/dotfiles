@@ -13,12 +13,16 @@ import re
 import sys
 
 
+# Excluded on purpose: "let's do it" and "do it" — both trip false-positives
+# when the message is a pattern-selection reply like "let's do it server side"
+# or "do it that way", where the "it" is the approach being picked, not the
+# already-framed plan being greenlit. Users who want to greenlight can say
+# "go", "go ahead", "go for it", "ship it", "proceed", "approved", "lgtm",
+# or a message starting with "yes".
 GO_PHRASES = [
     r"\bgo ahead\b",
     r"\bgo for it\b",
-    r"\blet'?s do it\b",
     r"\bship it\b",
-    r"\bdo it\b",
     r"\bproceed\b",
     r"\bexecute\b",
     r"\bapproved\b",
@@ -106,8 +110,8 @@ def main():
         f"BLOCKED: {tool} requires explicit go-ahead in the most recent user "
         "message. Per ~/.claude/CLAUDE.md Collaboration Cadence: stop and "
         "present framing/plan, then wait for the user to reply with an "
-        'approval phrase ("go", "go ahead", "do it", "proceed", "ship it", '
-        '"approved", "lgtm", or a message starting with "yes"). '
+        'approval phrase ("go", "go ahead", "go for it", "proceed", "ship it", '
+        '"execute", "approved", "lgtm", or a message starting with "yes"). '
         "Override for this session: CLAUDE_SKIP_GATE=1."
     )
     print(msg, file=sys.stderr)

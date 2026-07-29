@@ -14,7 +14,7 @@ Planning, framing, design, and pattern selection are where partnership matters. 
 
 ### The gate
 
-**Stop and wait for an explicit go-ahead from the user before any Edit, Write, or NotebookEdit tool call on a non-trivial task.** Go-ahead means a user message saying "go", "go ahead", "do it", "proceed", "execute", "ship it", "approved", "lgtm", or a message starting with "yes" — *responding to the specific plan you posted in your previous message*. Anything less is not alignment.
+**Stop and wait for an explicit go-ahead from the user before any Edit, Write, or NotebookEdit tool call on a non-trivial task.** Go-ahead means a user message saying "go", "go ahead", "go for it", "proceed", "execute", "ship it", "approved", "lgtm", or a message starting with "yes" — *responding to the specific plan you posted in your previous message*. Anything less is not alignment. ("Do it" and "let's do it" are intentionally NOT in this list — they trip false-positives on pattern-selection replies like "do it server side".)
 
 Common failure mode: treating your own framing message as alignment. Posting a plan and proceeding in the same turn is the canonical violation. If the last user message wasn't a green light on your specific plan, you are not aligned yet — stop.
 

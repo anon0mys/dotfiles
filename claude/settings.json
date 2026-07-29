@@ -77,6 +77,7 @@
     ],
     "defaultMode": "auto"
   },
+  "model": "claude-opus-4-7",
   "hooks": {
     "PreToolUse": [
       {
@@ -152,6 +153,14 @@
       }
     ]
   },
+  "extraKnownMarketplaces": {
+    "caveman": {
+      "source": {
+        "source": "github",
+        "repo": "JuliusBrussee/caveman"
+      }
+    }
+  },
   "effortLevel": "high",
   "skipAutoPermissionPrompt": true,
   "mcpServers": {
@@ -182,5 +191,7 @@
       ]
     }
   },
-  "model": "claude-opus-4-7"
+  "enabledPlugins": {
+    "caveman@caveman": true
+  }
 }
